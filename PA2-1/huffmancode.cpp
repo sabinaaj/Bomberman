@@ -133,6 +133,8 @@ public:
                 return nullptr;
             }
             root = new Tree(value, nullptr, nullptr, true);
+            // char c = value;
+            // cout << "Tree value :" << c << " bit:" << endl;
         } else {
             root = new Tree(0, makeTree(), makeTree(), false);
 
@@ -229,11 +231,11 @@ public:
 
     bool writeUTF8(int value) {
         char x;
-        bool y = false;
+        // cout << "Write to file" << endl;
         for (int i = 3; i > -1; i--) {
             x = (value >> 8 * i);
-            if (y || x || i==0) {
-                y = true;
+            // cout << x << ", " << value << endl;
+            if (x || i == 0) {
                 if (!writeToFile(x)) return false;
             }
         }
@@ -282,6 +284,7 @@ public:
             }
 
         }
+        // cout << "Chunk size is " << m_num << "counter: " << counter << endl;
         m_chunk = false;
         return true;
     }
@@ -291,7 +294,7 @@ public:
             if (!openFileWrite()) return false;
         }
 
-        if (m_out.good()) {
+        if (m_out.good() || m_out.eof()) {
             m_out << value;
             return true;
         }
@@ -307,6 +310,7 @@ public:
 
 bool decompressFile(const char *inFileName, const char *outFileName) {
     Huff x = Huff(inFileName, outFileName);
+    x.openFileWrite();
     if (!x.startMakeTree()) return false;
     //if (!x.startControlTree()) return false;
     if (x.is_fail()) return false;
@@ -332,6 +336,8 @@ bool identicalFiles(const char *fileName1, const char *fileName2) {
 }
 
 int main(void) {
+    assert(decompressFile("in.bin", "tempfile"));
+
     assert(decompressFile("tests/in.bin", "tempfile"));
     assert(identicalFiles("tests/ref.bin", "tempfile"));
 
