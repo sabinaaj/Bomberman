@@ -15,7 +15,9 @@
 using namespace std;
 #endif /* __PROGTEST__ */
 
-//doresit binary search, spis lower_bound
+//doresit spatny odstranovani a proste dvojici jmeno/adresa
+// nemuzu hledat neco v jinak serazenem poli...
+// ty velky/maly pismena
 
 class Company{
     string m_name;
@@ -36,10 +38,22 @@ public:
         return m_taxID == taxID;
     }
 
-    static int cmp (const Company & a, const Company & b){
+    static bool cmp (const Company & a, const Company & b){
         if( strcmp(a.m_name.c_str(),b.m_name.c_str()) == 0){
             return (strcmp(a.m_addr.c_str(), b.m_addr.c_str())< 0);
         } else return strcmp(a.m_name.c_str(),b.m_name.c_str()) < 0;
+    }
+
+    static bool cmpName (const Company & a, const string b) {
+         return (strcasecmp(a.m_name.c_str(),b.c_str()) < 0);
+    }
+
+    static bool cmpAddr (const Company & a, const string b) {
+        return (strcasecmp(a.m_addr.c_str(),b.c_str()) < 0);
+    }
+
+    static bool cmpID (const Company & a, const string b){
+        return (strcmp(a.m_taxID.c_str(), b.c_str()) < 0);
     }
 
     void addAmount (int amount) {
@@ -49,13 +63,16 @@ public:
     inline int getSum(void) const {return m_sum;}
     inline string getName(void) const {return m_name;}
     inline string getAddr(void) const {return m_addr;}
+    inline string getID(void) const {return m_taxID;}
 
 };
 
 class CVATRegister {
-    vector<Company> db;
+    vector<Company> dbName;
+    vector<Company> dbId;
     vector<int> amounts;
     mutable int cnt = 1;
+    mutable vector<Company>::iterator pos;
 
 public:
     CVATRegister(void) {}
@@ -63,26 +80,23 @@ public:
     ~CVATRegister(void) {}
 
     bool newCompany(const string &name, const string &addr, const string &taxID) {
-        for (const auto &x: db) {
+        for (const auto &x: dbName) {
             if (x.isSameCompanyName(name, addr) || x.isSameCompanyID(taxID)) {
                 return false;
             }
         }
-        db.push_back(Company(name, addr, taxID));
-        sort(db.begin(), db.end(), Company::cmp);
-
-        for (size_t i = 0; i < db.size(); i++){
-            cout << db[i].getName() << endl;
-            cout << db[i].getAddr() << endl;
+        pos = lower_bound(dbId.begin(), dbId.end(), taxID , Company::cmpID);
+        dbId.insert(pos, Company(name, addr, taxID));
+        pos = lower_bound(dbName.begin(), dbName.end(), name, Company::cmpName);
+        dbName.insert(pos, Company(name, addr, taxID));
+            return true;
         }
-        cout << endl;
-        return true;
-    }
+
 
     bool cancelCompany(const string &name, const string &addr) {
-        for (size_t i = 0; i < db.size(); i++) {
-            if (db[i].isSameCompanyName(name, addr)) {
-                db.erase(db.begin() + i);
+        for (size_t i = 0; i < dbName.size(); i++) {
+            if (dbName[i].isSameCompanyName(name, addr)) {
+                dbName.erase(dbName.begin() + i);
                 return true;
             }
         }
@@ -90,9 +104,9 @@ public:
     }
 
     bool cancelCompany(const string &taxID) {
-        for (size_t i = 0; i < db.size(); i++) {
-            if (db[i].isSameCompanyID(taxID)) {
-                db.erase(db.begin() + i);
+        for (size_t i = 0; i < dbName.size(); i++) {
+            if (dbName[i].isSameCompanyID(taxID)) {
+                dbName.erase(dbName.begin() + i);
                 return true;
             }
         }
@@ -100,66 +114,92 @@ public:
     }
 
     bool invoice(const string &taxID, unsigned int amount) {
-       // binary_search(db.begin(), db.end(), taxID);
-        for (size_t i = 0; i < db.size(); i++) {
-            if (db[i].isSameCompanyID(taxID)) {
-                db[i].addAmount(amount);
-                amounts.push_back(amount);
-                sort(amounts.begin(), amounts.end());
-                return true;
-            }
+        pos = lower_bound(dbId.begin(), dbId.end(), taxID , Company::cmpID);
+
+        if  (pos == dbId.end() || strcasecmp(pos->getID().c_str(), taxID.c_str()) != 0){
+            return false;
         }
-        return false;
+        else {
+            pos->addAmount(amount);
+            amounts.push_back(amount);
+            sort(amounts.begin(), amounts.end());
+            return true;
+        }
     }
+
 
     bool invoice(const string &name, const string &addr, unsigned int amount) {
-        for (size_t i = 0; i < db.size(); i++) {
-            if (db[i].isSameCompanyName(name, addr)) {
-                db[i].addAmount(amount);
-                amounts.push_back(amount);
-                sort(amounts.begin(), amounts.end());
-                return true;
-            }
+        pos = lower_bound(dbName.begin(), dbName.end(), name , Company::cmpName);
+        if  (pos == dbName.end() || strcasecmp(pos->getName().c_str(), name.c_str()) != 0){
+            return false;}
+
+        string taxID = pos->getID();
+        pos = lower_bound(dbId.begin(), dbId.end(), taxID , Company::cmpID);
+
+        if  (pos == dbId.end() || strcasecmp(pos->getID().c_str(), taxID.c_str()) != 0){
+            return false;
         }
-        return false;
+        else {
+            if(!pos->isSameCompanyName(name, addr)){
+                pos = lower_bound(dbName.begin(), dbName.end(), addr , Company::cmpAddr);
+            }
+            if(!pos->isSameCompanyName(name, addr)){
+                return false;
+            }
+            pos->addAmount(amount);
+            amounts.push_back(amount);
+            sort(amounts.begin(), amounts.end());
+            return true;
+        }
     }
 
-    bool audit(const string &name, const string &addr, unsigned int &sumIncome) const {
-        for (size_t i = 0; i < db.size(); i++) {
-            if (db[i].isSameCompanyName(name, addr)) {
-                sumIncome = db[i].getSum();
-                return true;
-            }
+    bool audit(const string &name, const string &addr, unsigned int &sumIncome) {
+        pos = lower_bound(dbName.begin(), dbName.end(), name , Company::cmpName);
+        if  (pos == dbName.end() || strcasecmp(pos->getName().c_str(), name.c_str()) != 0){
+            return false;}
+
+        string taxID = pos->getID();
+        pos = lower_bound(dbId.begin(), dbId.end(), taxID , Company::cmpID);
+
+        if  (pos == dbId.end() || strcasecmp(pos->getID().c_str(), taxID.c_str()) != 0){
+            return false;
         }
-        return false;
+        else {
+            if(!pos->isSameCompanyName(name,addr)){
+                pos = lower_bound(dbName.begin(), dbName.end(), addr , Company::cmpAddr);
+            }
+            if(!pos->isSameCompanyName(name, addr)){
+                return false;
+            }
+            sumIncome = pos->getSum();
+            return true;
+        }
     }
 
-    bool audit(const string &taxID, unsigned int &sumIncome) const {
-        for (size_t i = 0; i < db.size(); i++) {
-            if (db[i].isSameCompanyID(taxID)) {
-                sumIncome = db[i].getSum();
-                return true;
-            }
+    //vratit const
+    bool audit(const string &taxID, unsigned int &sumIncome) {
+        pos = lower_bound(dbId.begin(), dbId.end(), taxID , Company::cmpID);
+
+        if  (pos == dbId.end() || strcasecmp(pos->getID().c_str(), taxID.c_str()) != 0){
+            return false;
         }
-        return false;
+        else {
+            sumIncome = pos->getSum();
+            return true;
+        }
     }
 
     bool firstCompany(string &name, string &addr) const {
-        if (db.size() == 0) return false;
-        name = db[0].getName();
-        addr = db[0].getAddr();
-        cout << name << endl;
-        cout << addr << endl;
+        if (dbName.size() == 0) return false;
+        name = dbName[0].getName();
+        addr = dbName[0].getAddr();
         return true;
     }
 
     bool nextCompany(string &name, string &addr) const {
-        cout << db.size() << endl;
-        if (cnt >= int(db.size())) return false;
-        name = db[cnt].getName();
-        addr = db[cnt].getAddr();
-        cout << name << endl;
-        cout << addr << endl;
+        if (cnt >= int(dbName.size())) return false;
+        name = dbName[cnt].getName();
+        addr = dbName[cnt].getAddr();
         cnt++;
         return true;
     }
