@@ -1,13 +1,17 @@
-//
-// Created by sabina on 19.4.22.
-//
 
 #ifndef BOMBERMAN_CONSTANTS_H
 #define BOMBERMAN_CONSTANTS_H
 
-#define WIDTH 51
-#define HEIGHT 23
+/** width of game window */
+#define MAP_WIDTH 51
+/** height of game window */
+#define MAP_HEIGHT 23
+/** number of loops before bomb explode */
 #define BOMB_TIME 50
-#define SIZE_EXPLODE 2
+/** max number of bombs that can one player have */
+#define MAX_BOMBS 5
+/** max number of flame size */
+#define MAX_FLAME 4
+
 
 #endif //BOMBERMAN_CONSTANTS_H

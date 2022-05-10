@@ -1,15 +1,5 @@
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <cstdio>
-#include <bits/stdc++.h>
-#include <ncurses.h>
-#include "Constants.h"
-#include "CMenu.h"
-#include "CPlayer.h"
-#include "CGame.h"
-using namespace std;
 
+#include "CMenu.h"
 
 int main() {
     CMenu menu;
@@ -18,6 +8,10 @@ int main() {
 
     return 0;
 }
-
-//bomba je zed
-// omezeny pocet bomb
+//skore
+//AI
+// kdyz jsou 2 napisy, tak to spadne
+// pada to, kdyz je vic bomb
+// vybuch bomby ve vybuchu
+// udelat rychlost
+// ukoncovaci zprava

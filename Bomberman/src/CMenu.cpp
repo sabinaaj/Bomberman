@@ -1,9 +1,8 @@
 //
 // Created by sabina on 19.4.22.
 //
-#include <ncurses.h>
+
 #include "CMenu.h"
-#include "CGame.h"
 
 
 void CMenu::print() {
@@ -25,8 +24,8 @@ void CMenu::print() {
 }
 
 void CMenu::init(){
-    int start_x = (80 - WIDTH) / 2;
-    int start_y = (30 - HEIGHT) / 2;
+    int start_x = (80 - WIN_WIDTH) / 2;
+    int start_y = (30 - WIN_HEIGHT) / 2;
     highlight = 1;
 
     initscr();
@@ -36,7 +35,7 @@ void CMenu::init(){
     cbreak();
     refresh();
 
-    menu_win = newwin(HEIGHT, WIDTH, start_y, start_x);
+    menu_win = newwin(WIN_HEIGHT, WIN_WIDTH, start_y, start_x);
     keypad(menu_win, TRUE);
 }
 
@@ -48,12 +47,12 @@ void CMenu::chooseGamemode(){
     arrows();
 
     if(choice == 3){
-        refresh();
+        delwin(menu_win);
         endwin();
     }
     else {
-        chooseMap();
         gamemode = choice;
+        chooseMap();
     }
 }
 
@@ -68,6 +67,7 @@ void CMenu::chooseMap() {
         chooseGamemode();
     }
     else {
+        delwin(menu_win);
         CGame(gamemode, choice);
     }
 

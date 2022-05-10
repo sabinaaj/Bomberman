@@ -1,10 +1,11 @@
 
 #include "CBomb.h"
 
-CBomb::CBomb(int pos_x, int pos_y) {
+CBomb::CBomb(int x, int y, int player) {
     time = BOMB_TIME;
-    x = pos_x;
-    y = pos_y;
+    this->x = x;
+    this->y = y;
+    this->player = player;
 }
 
 bool CBomb::timer() {
