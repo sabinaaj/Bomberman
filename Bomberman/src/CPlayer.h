@@ -129,15 +129,22 @@ public:
  * Child class takes care of computer player
  */
 class CPlayerAI: public CPlayer{
+private:
+    char prev;
+    vector<char> isEmpty;
 public:
     /**
     * Constructor
     * @param num player number
     */
     CPlayerAI(int num): CPlayer(num){
+        prev = ' ';
     }
+    bool hitPlayer(int bombX, int bombY, int flameRange, int playerX, int playerY);
 
-    bool inBombRange(vector <CBomb> & bombsArr);
+    bool inBombRange(vector <CBomb> & bombsArr, int playerX, int playerY);
+
+    void canGo(CMap * Map, vector <CBomb> & bombsArr);
 
     void control(CMap * Map, vector <CBomb> & bombsArr) override;
 };

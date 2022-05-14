@@ -24,8 +24,8 @@ void CMenu::print() {
 }
 
 void CMenu::init(){
-    int start_x = (80 - WIN_WIDTH) / 2;
-    int start_y = (30 - WIN_HEIGHT) / 2;
+    int start_x = (80 - MAP_WIDTH) / 2;
+    int start_y = (30 - MAP_HEIGHT) / 2;
     highlight = 1;
 
     initscr();
@@ -35,7 +35,7 @@ void CMenu::init(){
     cbreak();
     refresh();
 
-    menu_win = newwin(WIN_HEIGHT, WIN_WIDTH, start_y, start_x);
+    menu_win = newwin(MAP_HEIGHT, MAP_WIDTH, start_y, start_x);
     keypad(menu_win, TRUE);
 }
 

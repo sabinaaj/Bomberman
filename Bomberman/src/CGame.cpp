@@ -16,9 +16,9 @@ CGame::CGame(int gm, int map)
 }
 
 CGame::~CGame(){
-    for (auto it = players.begin(); it != players.end(); it++){
-        delete *it;
-    }
+//    for (auto it = players.begin(); it != players.end(); it++){
+//        delete *it;
+//    }
 }
 
 void CGame::gameloop() {
@@ -31,6 +31,7 @@ void CGame::gameloop() {
         if(endGame) break;
 
         players[1]->control(&Map, bombs);
+        players[0]->control(&Map, bombs);
 
         for(auto it = bombs.begin(); it != bombs.end(); it++){
             if(it->timer()) {
@@ -40,8 +41,8 @@ void CGame::gameloop() {
         }
         players[0]->drawStats(&Map);
         players[1]->drawStats(&Map);
-
-        usleep(50000);
+        Map.refresh();
+        usleep(50000 * 3);
     }
     string image = players[endGame-1]->getImage();
     Map.endGame(image);
@@ -53,9 +54,10 @@ void CGame::explode(vector<CBomb>::iterator bomb) {
     int flame = players[player]->getFlame();
     int x = coords.first;
     int y = coords.second;
+    //hitBomb(flame, x ,y);
     vector <int> hitPlayers;
 
-    if (players[0]->hitPlayer(x, y, flame)) {
+    if (players[0]->hitPlayer(x, y, flame )) {
         players[0]->gotHit1();
         hitPlayers.push_back(0);
     }
@@ -69,10 +71,33 @@ void CGame::explode(vector<CBomb>::iterator bomb) {
      for (auto a: hitPlayers){
          players[a]->gotHit2(&Map);
      }
-    Map.drawBonus(coords.first, coords.second);
+    Map.drawBonus();
     bombs.erase(bombs.begin());
 }
 
+void CGame::hitBomb(int flame, int x, int y) {
+    for (auto it = bombs.begin(); it != bombs.end(); it++){
+        pair<int, int> coords = it->getCoords();
+        for (int i = 1; i < flame; i++) {
+            if (coords.first == x + 2 * i && coords.second == y) {
+                explode(it);
+                bombs.erase(it);
+            }
+            if (coords.first == x - 2 * i && coords.second == y) {
+                explode(it);
+                bombs.erase(it);
+            }
+            if (coords.first == x && coords.second == y + i) {
+                explode(it);
+                bombs.erase(it);
+            }
+            if (coords.first == x && coords.second == y - i) {
+                explode(it);
+                bombs.erase(it);
+            }
+        }
+    }
+}
 
 void CGame::input() {
     int ch;

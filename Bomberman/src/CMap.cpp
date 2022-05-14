@@ -2,16 +2,16 @@
 #include "CMap.h"
 
 void CMap::loadMap(int mapNum) {
-    game_win = newwin(WIN_HEIGHT, WIN_WIDTH, 0, 0);
+    game_win = newwin(MAP_HEIGHT, MAP_WIDTH, 0, 0);
     keypad(game_win, TRUE);
-    bonus_win = newwin(1, WIN_WIDTH, 24, 0);
+    bonus_win = newwin(3, MAP_WIDTH, 24, 0);
 
     ifstream in;
     string c;
     string mapName = string("../maps/map0").append(to_string(mapNum));
     in.open(mapName, ifstream::in);
     if (in.is_open()) {
-        for (int i = 0; i < MAP_HEIGHT; i++){
+        for (int i = 0; i < MAP_HEIGHT - 1; i++){
             for (int j = 0; j < MAP_WIDTH; j++){
                 c = in.get();
                 mvwprintw(game_win, i, j, c.c_str());
@@ -24,12 +24,12 @@ void CMap::loadMap(int mapNum) {
 }
 
 void CMap::redraw(){
-    for (int i = 0; i < MAP_HEIGHT; i++){
+    wclear(game_win);
+    for (int i = 0; i < MAP_HEIGHT - 1; i++){
         for (int j = 0; j < MAP_WIDTH; j++){
             mvwprintw(game_win, i, j, map_arr[j][i].c_str());
         }
     }
-    wrefresh(game_win);
 }
 
 void CMap::changeMap(int x, int y, string a) {
@@ -89,8 +89,8 @@ void CMap::drawStats(int lives, int bombs, int player) {
     string liveStr = string("Lives: ").append(to_string(lives));
     string bombStr = string ("Bombs: ").append(to_string(bombs));
     if(player){
-        mvwprintw(game_win, 23, WIN_WIDTH - 20, liveStr.c_str());
-        mvwprintw(game_win, 23, WIN_WIDTH - 10, bombStr.c_str());
+        mvwprintw(game_win, 23, MAP_WIDTH - 20, liveStr.c_str());
+        mvwprintw(game_win, 23, MAP_WIDTH - 10, bombStr.c_str());
     }
     else{
         mvwprintw(game_win, 23, 0, liveStr.c_str());
@@ -112,7 +112,7 @@ void CMap::drawBonus() {
 }
 
 void CMap::bonusText(string text) {
-    wprintw(bonus_win, text.c_str());
+    mvwprintw(bonus_win, 0, 0, text.c_str());
     wrefresh(bonus_win);
 
     sleep(3);
@@ -121,6 +121,7 @@ void CMap::bonusText(string text) {
 }
 
 void CMap::endGame(string player) {
+    sleep(1);
     delwin(bonus_win);
     wclear(game_win);
 

@@ -49,6 +49,8 @@ public:
      *  Makes bomb explodes and draw flames
      */
     void explode(vector<CBomb>::iterator bomb);
+
+    void hitBomb(int flame, int x, int y);
 };
 
 

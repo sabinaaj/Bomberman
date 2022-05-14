@@ -8,10 +8,8 @@ int main() {
 
     return 0;
 }
-//skore
-//AI
-// kdyz jsou 2 napisy, tak to spadne
-// pada to, kdyz je vic bomb
+// skore
 // vybuch bomby ve vybuchu
 // udelat rychlost
-// ukoncovaci zprava
+// herni pole se rozpada
+// destruktor

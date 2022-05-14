@@ -100,9 +100,12 @@ public:
 
     /**
      * show end text and ends game
+     * show end text and ends game
      * @param player image of player who lost
      */
     void endGame(string player);
+
+    inline void refresh (){wrefresh(game_win);}
 
     /**
      * Gets player input
@@ -110,6 +113,7 @@ public:
      */
     inline int input() { int ch = wgetch(game_win);
                          return ch;}
+
 };
 
 
