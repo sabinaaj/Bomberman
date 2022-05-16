@@ -1,7 +1,8 @@
 
 #ifndef BOMBERMAN_CGAME_H
 #define BOMBERMAN_CGAME_H
-#include "CPlayer.h"
+
+#include "CPlayerAI.h"
 
 /**
  * Class takes care of bombs, players and map
@@ -15,9 +16,9 @@ private:
     /** if game is over or not */
     int endGame;
     /** vector stores bombs in map */
-    vector <CBomb> bombs;
+    vector<CBomb> bombs;
     /** vector stores 2 players */
-    vector <CPlayer *> players;
+    vector<CPlayer *> players;
     /** map object */
     CMap Map;
 
@@ -28,7 +29,7 @@ public:
      * @param gm gamemode
      * @param map number of chosen map
      */
-    CGame(int gm,int map);
+    CGame(int gm, int map);
 
     /**
      * destructor destroys players
@@ -50,7 +51,6 @@ public:
      */
     void explode(vector<CBomb>::iterator bomb);
 
-    void hitBomb(int flame, int x, int y);
 };
 
 

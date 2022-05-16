@@ -1,6 +1,7 @@
 
 #ifndef BOMBERMAN_CMAPA_H
 #define BOMBERMAN_CMAPA_H
+
 #include <string>
 #include <vector>
 #include <fstream>
@@ -8,6 +9,7 @@
 #include <unistd.h>
 #include <thread>
 #include "Constants.h"
+
 using namespace std;
 
 /**
@@ -16,9 +18,9 @@ using namespace std;
 class CMap {
 private:
     /** pointer to window with bonus text */
-    WINDOW * bonus_win;
+    WINDOW *bonus_win;
     /** pointer to game win  */
-    WINDOW * game_win;
+    WINDOW *game_win;
     /** vector stores chars in map in theirs coords */
     string map_arr[MAP_WIDTH][MAP_HEIGHT];
     /** vector store coords of places where cn be placed bonus*/
@@ -41,7 +43,7 @@ public:
      * @param y next step coords
      * @return 1 if coords are empty, 0 if is not and 2 if there is a bonus
      */
-    int isEmpty(int x, int y);
+    int isEmpty(int x, int y) const;
 
     /**
      * Assigns string a to given coord
@@ -49,7 +51,7 @@ public:
      * @param y
      * @param a string which we want to have at given coords
      */
-    void changeMap(int x, int y, string a);
+    void changeMap(int x, int y, const string &a);
 
     /**
      * Gets string which is on given coords
@@ -66,7 +68,7 @@ public:
      * @param flameSize size of the flame
      * @param a what it draws
      */
-    void explode(int x, int y, int flameSize, string a);
+    void explode(int x, int y, int flameSize, const string &a);
 
     /**
      * Checks if bomb can explode at given coords
@@ -75,7 +77,7 @@ public:
      * @param exp if there can be flame or not
      * @return true if coords are empty, false if is not
      */
-    bool explodeEmpty (int x, int y, bool & exp);
+    bool explodeEmpty(int x, int y, bool &exp);
 
     /**
      * Draws live and bomb counters on the bottom of game window
@@ -83,9 +85,16 @@ public:
      * @param bombs number of lives
      * @param player player whose stats it is
      */
-    void drawStats(int lives, int bombs, int player);
+    void drawStats(int lives, int bombs, int score, int player);
 
-    bool isInRange(int x, int y, string a);
+    /**
+     * Checks if a is in range of player
+     * @param x of player
+     * @param y of player
+     * @param a map object (wall, bomb, ...)
+     * @return true if it is in range
+     */
+    bool isInRange(int x, int y, const string &a);
 
     /**
      * Draws bonus at random coords
@@ -96,23 +105,32 @@ public:
      * Draws text which says who get which bonus
      * @param text
      */
-    void bonusText(string text);
+    void bonusText(const string &text);
 
     /**
      * show end text and ends game
      * show end text and ends game
      * @param player image of player who lost
      */
-    void endGame(string player);
-
-    inline void refresh (){wrefresh(game_win);}
+    void endGame(const string &player, int maxscore);
 
     /**
-     * Gets player input
+     * @return number of destroyed walls
+     */
+    inline size_t getFlameSize() { return flame.size(); }
+
+    /**
+     * Refresh game window
+     */
+    inline void refresh() { wrefresh(game_win); }
+
+    /**
      * @return player input
      */
-    inline int input() { int ch = wgetch(game_win);
-                         return ch;}
+    inline int input() {
+        int ch = wgetch(game_win);
+        return ch;
+    }
 
 };
 

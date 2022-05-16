@@ -1,8 +1,10 @@
 
 #ifndef BOMBERMAN_CPLAYER_H
 #define BOMBERMAN_CPLAYER_H
+
 #include "CMap.h"
 #include "CBomb.h"
+
 using namespace std;
 
 /**
@@ -18,6 +20,8 @@ protected:
     int lives;
     /** number of bombs */
     int bombs;
+    /** score counter */
+    int score;
     /** how much is player slower */
     int speedDelay;
     /** size of flame */
@@ -35,6 +39,11 @@ public:
     CPlayer(int num);
 
     /**
+     * Default destructor
+     */
+    virtual ~CPlayer(){}
+
+    /**
      * Change background of player to bomb image and decreases bombs number
      * @return true if bomb was successfully placed
      */
@@ -44,14 +53,14 @@ public:
      * Calls CMap::drawStats
      * @param Map pointer to map
      */
-    void drawStats(CMap * Map);
+    void drawStats(CMap *Map);
 
     /**
      * Moves player in given direction
      * @param dir direction where player go
      * @param Map pointer to map
      */
-    void step(char dir, CMap * Map);
+    void step(char dir, CMap *Map);
 
     /**
      * Makes bomb explodes and draw flames
@@ -59,11 +68,12 @@ public:
      * @param bombY y of bomb
      * @param Map pointer to map
      */
-    void explode(int bombX, int bombY, CMap * Map);
+    void explode(int bombX, int bombY, CMap *Map);
 
     /**
-     * @param bombX
-     * @param bombY
+     * Checks if player was hit
+     * @param bombX x of bomb
+     * @param bombY y of bomb
      * @param flameRange size of flame
      * @return true if flame hits player and false if doesn't
      */
@@ -78,74 +88,44 @@ public:
      * Changes background and draws player after explosion
      * @param Map pointer to map
      */
-    void gotHit2(CMap * Map);
+    void gotHit2(CMap *Map);
 
     /**
      * Picks and applies bonus effect
      * @param Map pointer to map
      */
-    void pickBonus(CMap * Map);
+    void pickBonus(CMap *Map);
 
     /**
-     * Gets coords
-     * @return Coords of player
+     *
+     * @param Map
+     * @param bombsArr
      */
-    inline pair<int, int> getCoords() const {return make_pair(x, y);}
+    virtual void control(CMap *Map, vector<CBomb> &bombsArr);
 
-    /**
-     * Gets lives
-     * @return number of lives
-     */
-    inline int getLives() const {return lives;}
+    inline pair<int, int> getCoords() const { return make_pair(x, y); }
 
-    /**
-     * Gets size of flame
-     * @return size of flame
-     */
-    inline int getFlame() {return flame;}
+    inline int getLives() const { return lives; }
 
-    virtual void control(CMap * Map, vector <CBomb> & bombsArr);
+    inline int getFlame() { return flame; }
 
-    /**
-     * Gets image
-     * @return string which represents player
-     */
-    inline string getImage() const {return image;}
+    inline string getImage() const { return image; }
+
+    inline int getScore() const { return score; }
+
+    inline void addScore(int num) { score += num; }
 };
 
 /**
  * Child class takes care of user player
  */
-class CPlayerNotAI: public CPlayer{
+class CPlayerNotAI : public CPlayer {
 public:
     /**
      * Constructor
      * @param num player number
      */
-    CPlayerNotAI(int num): CPlayer(num){}
+    CPlayerNotAI(int num) : CPlayer(num) {}
 };
 
-/**
- * Child class takes care of computer player
- */
-class CPlayerAI: public CPlayer{
-private:
-    char prev;
-    vector<char> isEmpty;
-public:
-    /**
-    * Constructor
-    * @param num player number
-    */
-    CPlayerAI(int num): CPlayer(num){
-        prev = ' ';
-    }
-    bool hitPlayer(int bombX, int bombY, int flameRange, int playerX, int playerY);
-
-    bool inBombRange(vector <CBomb> & bombsArr, int playerX, int playerY);
-
-    void canGo(CMap * Map, vector <CBomb> & bombsArr);
-
-    void control(CMap * Map, vector <CBomb> & bombsArr) override;
-};
 #endif //BOMBERMAN_CPLAYER_H

@@ -8,8 +8,8 @@ int main() {
 
     return 0;
 }
-// skore
-// vybuch bomby ve vybuchu
-// udelat rychlost
-// herni pole se rozpada
 // destruktor
+//vratit max bombs a konstanty
+// komentare
+// ta pitoma dedicnost
+//blikani
