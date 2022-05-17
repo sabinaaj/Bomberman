@@ -30,6 +30,8 @@ void CPlayerAI::canGo(CMap *Map, const vector<CBomb> &bombsArr) {
 }
 
 void CPlayerAI::control(CMap *Map, vector<CBomb> &bombsArr) {
+    Map->drawStats(lives, bombs, score, num);
+
     if (inBombRange(bombsArr, x, y)) {
         if (Map->isEmpty(x, y - 1) &&
             (Map->isEmpty(x - 2, y - 1) || Map->isEmpty(x + 2, y - 1) || Map->isEmpty(x, y - 2))) {

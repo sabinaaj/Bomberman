@@ -3,22 +3,21 @@
 
 CPlayer::CPlayer(int number) {
     if (number == 0) {
-        x = 2;
-        y = 1;
+        x = A_X;
+        y = A_Y;
         num = number;
         image = "A";
 
     } else {
-        x = 46;
-        y = 21;
+        x = B_X;
+        y = B_Y;
         num = number;
         image = "B";
     }
     background = " ";
-    lives = 3;
-    bombs = 1;
-    flame = 2;
-    speedDelay = 50000;
+    lives = LIVES;
+    bombs = BOMBS;
+    flame = FLAME;
     score = 0;
 }
 
@@ -78,14 +77,10 @@ bool CPlayer::placeBomb() {
     return false;
 }
 
-void CPlayer::drawStats(CMap *Map) {
-    Map->drawStats(lives, bombs, score, num);
-}
-
 void CPlayer::explode(int bombX, int bombY, CMap *Map) {
     bombs++;
     Map->explode(bombX, bombY, flame, "X");
-    sleep(1);
+    sleep(EXPLODE_SLEEP);
     Map->explode(bombX, bombY, flame, " ");
 }
 
@@ -101,7 +96,6 @@ bool CPlayer::hitPlayer(int bombX, int bombY, int flameRange) {
     }
     return false;
 }
-
 
 void CPlayer::gotHit1() {
     lives--;
@@ -120,7 +114,7 @@ void CPlayer::pickBonus(CMap *Map) {
         case 0:
             if (flame < MAX_FLAME) {
                 flame += 1;
-                score += 10;
+                score += BONUS_SCORE;
                 thread t(&CMap::bonusText, Map, "Player " + image + " got bigger flame");
                 t.detach();
             } else {
@@ -131,7 +125,7 @@ void CPlayer::pickBonus(CMap *Map) {
         case 1:
             if (bombs < MAX_BOMBS) {
                 bombs += 1;
-                score += 10;
+                score += BONUS_SCORE;
                 thread t(&CMap::bonusText, Map, "Player " + image + " got +1 bomb");
                 t.detach();
             } else {
@@ -142,7 +136,9 @@ void CPlayer::pickBonus(CMap *Map) {
     }
 }
 
-void CPlayer::control(CMap *Map, vector<CBomb> &bombsArr) {}
+void CPlayerNotAI::control(CMap *Map, vector<CBomb> &bombsArr) {
+    Map->drawStats(lives, bombs, score, num);
+}
 
 
 

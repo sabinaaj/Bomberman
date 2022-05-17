@@ -2,13 +2,11 @@
 #ifndef BOMBERMAN_CMAPA_H
 #define BOMBERMAN_CMAPA_H
 
-#include <string>
 #include <vector>
 #include <fstream>
-#include <ncurses.h>
 #include <unistd.h>
 #include <thread>
-#include "Constants.h"
+#include "CException.h"
 
 using namespace std;
 
@@ -25,6 +23,17 @@ private:
     string map_arr[MAP_WIDTH][MAP_HEIGHT];
     /** vector store coords of places where cn be placed bonus*/
     vector<pair<int, int>> flame;
+
+    /**
+     * Checks if bomb can explode at given coords
+     * @param x of bomb
+     * @param y of bomb
+     * @param exp if there can be flame or not
+     * @return true if coords are empty, false if is not
+     */
+    bool explodeEmpty(int x, int y, bool &exp);
+
+
 public:
     /**
      * Load map from file
@@ -71,15 +80,6 @@ public:
     void explode(int x, int y, int flameSize, const string &a);
 
     /**
-     * Checks if bomb can explode at given coords
-     * @param x of bomb
-     * @param y of bomb
-     * @param exp if there can be flame or not
-     * @return true if coords are empty, false if is not
-     */
-    bool explodeEmpty(int x, int y, bool &exp);
-
-    /**
      * Draws live and bomb counters on the bottom of game window
      * @param lives number of lives
      * @param bombs number of lives
@@ -124,6 +124,7 @@ public:
      */
     inline void refresh() { wrefresh(game_win); }
 
+    inline void del() { delwin(game_win);}
     /**
      * @return player input
      */

@@ -9,7 +9,7 @@ using namespace std;
  */
 class CBomb{
 private:
-    /** number od loops before bomb explode */
+    /** number of loops before bomb explode */
     int time;
     /** coords of bomb */
     int x, y;

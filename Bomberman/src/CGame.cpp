@@ -3,19 +3,27 @@
 
 CGame::CGame(int gm, int map)
         : gamemode(gm), mapNum(map) {
-    endGame = 0;
-    players.push_back(new CPlayerAI(0));
+    end = 0;
+
+    players.push_back(new CPlayerNotAI(0));
     if (gamemode == 2) {
         players.push_back(new CPlayerNotAI(1));
     } else {
         players.push_back(new CPlayerAI(1));
     }
-    Map.loadMap(map);
-    gameloop();
+
+    try{
+        Map.loadMap(map);
+    } catch(CException & text) {
+        text.print();
+        end = 1;
+    }
+
+    if (!end) gameloop();
 }
 
 CGame::~CGame() {
-    for (auto it = players.begin(); it != players.end(); it++){
+    for (auto it = players.begin(); it != players.end(); it++) {
         delete *it;
     }
 }
@@ -24,11 +32,12 @@ void CGame::gameloop() {
     thread t1(&CGame::input, this);
     t1.detach();
     while (true) {
-        if (players[0]->getLives() == 0) endGame = 1;
-        if (players[1]->getLives() == 0) endGame = 2;
+        if (players[0]->getLives() == 0) end = 1;
+        if (players[1]->getLives() == 0) end = 2;
 
-        if (endGame) break;
+        if (end) break;
 
+        Map.redraw();
         players[1]->control(&Map, bombs);
         players[0]->control(&Map, bombs);
 
@@ -38,30 +47,16 @@ void CGame::gameloop() {
                 t2.detach();
             }
         }
-        Map.redraw();
-        players[0]->drawStats(&Map);
-        players[1]->drawStats(&Map);
+        usleep(SLEEP_TIME);
         Map.refresh();
-        usleep(50000 * 3);
     }
 
-    fstream score;
-    int maxscore = 0;
-    score.open("score", fstream::in);
-    if (score.is_open()) {
-        score >> maxscore;
-        for (size_t i = 0; i < players.size(); i++) {
-            if (maxscore < players[i]->getScore()) {
-                maxscore = players[i]->getScore();
-                score.close(); //???
-                score.open("score", fstream::out | fstream::trunc);
-                score << maxscore;
-            }
-        }
+    try{
+        endGame();
+    } catch (CException & text){
+        text.print();
     }
-    score.close();
-    string image = players[endGame - 1]->getImage();
-    Map.endGame(image, maxscore);
+
 }
 
 void CGame::explode(vector<CBomb>::iterator bomb) {
@@ -73,12 +68,12 @@ void CGame::explode(vector<CBomb>::iterator bomb) {
     vector<int> hitPlayers;
 
     if (players[0]->hitPlayer(x, y, flame)) {
-        if (player == 1) players[1]->addScore(20);
+        if (player == 1) players[1]->addScore(HIT_SCORE);
         players[0]->gotHit1();
         hitPlayers.push_back(0);
     }
     if (players[1]->hitPlayer(x, y, flame)) {
-        if (player == 0) players[0]->addScore(20);
+        if (player == 0) players[0]->addScore(HIT_SCORE);
         players[1]->gotHit1();
         hitPlayers.push_back(1);
     }
@@ -96,7 +91,7 @@ void CGame::explode(vector<CBomb>::iterator bomb) {
 void CGame::input() {
     int ch;
 
-    while (!endGame) {
+    while (!end) {
         ch = Map.input();
         pair<int, int> coords0 = players[0]->getCoords();
         pair<int, int> coords1 = players[1]->getCoords();
@@ -141,3 +136,27 @@ void CGame::input() {
     }
 }
 
+void CGame::endGame() {
+    fstream score;
+    int maxscore = 0;
+    score.open("./assets/score", fstream::in);
+    if (score.is_open()) {
+        score >> maxscore;
+        for (size_t i = 0; i < players.size(); i++) {
+            if (maxscore < players[i]->getScore()) {
+                maxscore = players[i]->getScore();
+                score.close();
+                score.open("./assets/score", fstream::out | fstream::trunc);
+                score << maxscore;
+            }
+        }
+    }
+    else{
+        Map.del();
+        throw CException("Score file was not found.");
+    }
+
+    score.close();
+    string image = players[end - 1]->getImage();
+    Map.endGame(image, maxscore);
+}

@@ -1,6 +1,6 @@
 
 #include "CMenu.h"
-
+// inspired by https://tldp.org/HOWTO/NCURSES-Programming-HOWTO/keys.html
 
 void CMenu::print() {
     int x, y;

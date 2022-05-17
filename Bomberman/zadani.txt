@@ -1,0 +1,5 @@
+Bomberman
+
+Hra má variantu pro 2 hráče a hráč vs. počítač. První hráč se ovládá pomocí kláves WSAD a bomba se pokládá stiskem klávesy E, druhý hráč se ovládá pomocí šipek a bomba se pokládá mezerníkem. Při hře pouze jednoho hráče se hráč ovládá šipkami. Cílem hry je pomocí bomb ubrat druhému hráčovi životz a zábít ho dřív než on zabije vás. Začíná se se 3 životy a jednou bombou. Množství bomb se dá ovlivnit bonusy. Další bonusy zvětšují plamen, umožnují procházení skrz bomby nebo zrychlení. 
+
+Po zapnutí hry se spustí main, který přejde do třídy CMenu, která se stará o herní menu, kde si vybíráte počet hráčů a mapu. Hlavní je třída CGame ve které je gameloop a na tuhle třídu navazuje CBomb, CBonus a CPlayer. Třída Cplayer má potomka CPlayerAI, která se stará o hráče ovládaného počítačem. Na třídu CPlayer navazuje ještě třída CMap, která vykresluje mapu, hráče atd. na terminál pomocí knihovny ncurses. V poslední řádě má hra ještě hlavičkový soubor Constansts ve kterém jsou všechny konstanty.

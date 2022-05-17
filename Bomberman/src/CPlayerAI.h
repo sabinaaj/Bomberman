@@ -1,6 +1,7 @@
 
 #ifndef BOMBERMAN_PLAYERAI_H
 #define BOMBERMAN_PLAYERAI_H
+
 #include "CPlayer.h"
 
 /**
@@ -12,14 +13,6 @@ private:
     char prev;
     /** vector of directions where player can go*/
     vector<char> isEmpty;
-public:
-    /**
-    * Constructor
-    * @param num player number
-    */
-    CPlayerAI(int num) : CPlayer(num) {
-        prev = ' ';
-    }
 
     /**
      * Checks if player was hit
@@ -48,8 +41,17 @@ public:
      */
     void canGo(CMap *Map, const vector<CBomb> &bombsArr);
 
+public:
     /**
-     * Makes AI player move
+    * Constructor
+    * @param num player number
+    */
+    CPlayerAI(int num) : CPlayer(num) {
+        prev = ' ';
+    }
+
+    /**
+     * Makes AI player move and draws stats
      * @param Map pointer to map
      * @param bombsArr vector of placed bombs
      */

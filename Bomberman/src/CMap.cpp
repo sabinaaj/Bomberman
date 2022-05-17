@@ -8,7 +8,7 @@ void CMap::loadMap(const int mapNum) {
 
     ifstream in;
     string c;
-    string mapName = string("../maps/map0").append(to_string(mapNum));
+    string mapName = string("./examples/map0").append(to_string(mapNum));
     in.open(mapName, ifstream::in);
     if (in.is_open()) {
         for (int i = 0; i < MAP_HEIGHT - 2; i++) {
@@ -19,12 +19,14 @@ void CMap::loadMap(const int mapNum) {
             }
         }
         in.close();
+    } else {
+        delwin(game_win);
+        throw CException("Map was not found.");
     }
     wrefresh(game_win);
 }
 
 void CMap::redraw() {
-    wclear(game_win);
     for (int i = 0; i < MAP_HEIGHT - 1; i++) {
         for (int j = 0; j < MAP_WIDTH; j++) {
             mvwprintw(game_win, i, j, map_arr[j][i].c_str());
@@ -115,7 +117,7 @@ void CMap::bonusText(const string &text) {
     mvwprintw(bonus_win, 0, 0, text.c_str());
     wrefresh(bonus_win);
 
-    sleep(3);
+    sleep(BONUS_SLEEP);
     wclear(bonus_win);
     wrefresh(bonus_win);
 }

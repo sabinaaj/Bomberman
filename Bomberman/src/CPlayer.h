@@ -22,14 +22,18 @@ protected:
     int bombs;
     /** score counter */
     int score;
-    /** how much is player slower */
-    int speedDelay;
     /** size of flame */
     int flame;
     /** string which represents player */
     string image;
     /** string which remembers what is behind player */
     string background;
+
+    /**
+     * Picks and applies bonus effect
+     * @param Map pointer to map
+     */
+    void pickBonus(CMap *Map);
 
 public:
     /**
@@ -41,19 +45,13 @@ public:
     /**
      * Default destructor
      */
-    virtual ~CPlayer(){}
+    virtual ~CPlayer() {}
 
     /**
      * Change background of player to bomb image and decreases bombs number
      * @return true if bomb was successfully placed
      */
     bool placeBomb();
-
-    /**
-     * Calls CMap::drawStats
-     * @param Map pointer to map
-     */
-    void drawStats(CMap *Map);
 
     /**
      * Moves player in given direction
@@ -91,17 +89,11 @@ public:
     void gotHit2(CMap *Map);
 
     /**
-     * Picks and applies bonus effect
+     * virtual method
      * @param Map pointer to map
+     * @param bombsArr vector of placed bombs
      */
-    void pickBonus(CMap *Map);
-
-    /**
-     *
-     * @param Map
-     * @param bombsArr
-     */
-    virtual void control(CMap *Map, vector<CBomb> &bombsArr);
+    virtual void control(CMap *Map, vector<CBomb> &bombsArr) = 0;
 
     inline pair<int, int> getCoords() const { return make_pair(x, y); }
 
@@ -126,6 +118,13 @@ public:
      * @param num player number
      */
     CPlayerNotAI(int num) : CPlayer(num) {}
+
+    /**
+     * Draws stats
+     * @param Map pointer to map
+     * @param bombsArr vector of bombs
+     */
+    void control(CMap *Map, vector<CBomb> &bombsArr) override;
 };
 
 #endif //BOMBERMAN_CPLAYER_H
