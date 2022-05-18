@@ -7,6 +7,7 @@
  * Bomberman is an action game with 2 gamemodes:
  *   - 1 player
  *   - 2 players
+ *
  * You can choose from 3 maps from directory /examples.
  *
  * Controls:

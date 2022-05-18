@@ -6,6 +6,9 @@
 #include "Constants.h"
 using namespace std;
 
+/**
+ * Handles errors and exceptions
+ */
 class CException{
 private:
     string text;
@@ -14,6 +17,9 @@ public:
     :text(text)
     {}
 
+    /**
+     * Makes error window and writes error message
+     */
     void print() const {
         WINDOW * error_win = newwin(MAP_HEIGHT, MAP_WIDTH, 0, 0);
         mvwprintw(error_win, 8, 10, text.c_str());

@@ -51,7 +51,7 @@ public:
     }
 
     /**
-     * Makes AI player move and draws stats
+     * Call all functions to update the player status
      * @param Map pointer to map
      * @param bombsArr vector of placed bombs
      */

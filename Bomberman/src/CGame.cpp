@@ -69,12 +69,12 @@ void CGame::explode(vector<CBomb>::iterator bomb) {
 
     if (players[0]->hitPlayer(x, y, flame)) {
         if (player == 1) players[1]->addScore(HIT_SCORE);
-        players[0]->gotHit1();
+        players[0]->gotHit();
         hitPlayers.push_back(0);
     }
     if (players[1]->hitPlayer(x, y, flame)) {
         if (player == 0) players[0]->addScore(HIT_SCORE);
-        players[1]->gotHit1();
+        players[1]->gotHit();
         hitPlayers.push_back(1);
     }
 
@@ -82,7 +82,7 @@ void CGame::explode(vector<CBomb>::iterator bomb) {
     players[player]->addScore(Map.getFlameSize());
 
     for (auto a: hitPlayers) {
-        players[a]->gotHit2(&Map);
+        players[a]->afterHit(&Map);
     }
     Map.drawBonus();
     bombs.erase(bombs.begin());
@@ -129,8 +129,9 @@ void CGame::input() {
                     players[1]->step('D', &Map);
                 break;
             case ' ':
-                if (players[1]->placeBomb() && gamemode == 2)
-                    bombs.push_back(CBomb(coords1.first, coords1.second, 1));
+                if (gamemode == 2)
+                    if (players[1]->placeBomb())
+                        bombs.push_back(CBomb(coords1.first, coords1.second, 1));
                 break;
         }
     }

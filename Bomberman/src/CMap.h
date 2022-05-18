@@ -124,7 +124,11 @@ public:
      */
     inline void refresh() { wrefresh(game_win); }
 
+    /**
+     * Delete game window
+     */
     inline void del() { delwin(game_win);}
+
     /**
      * @return player input
      */

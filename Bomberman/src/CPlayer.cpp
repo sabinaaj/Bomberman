@@ -97,12 +97,12 @@ bool CPlayer::hitPlayer(int bombX, int bombY, int flameRange) {
     return false;
 }
 
-void CPlayer::gotHit1() {
+void CPlayer::gotHit() {
     lives--;
     background = "X";
 }
 
-void CPlayer::gotHit2(CMap *Map) {
+void CPlayer::afterHit(CMap *Map) {
     Map->changeMap(x, y, image);
     background = " ";
 }

@@ -80,16 +80,16 @@ public:
     /**
      * Decreases lives and changes background
      */
-    void gotHit1();
+    void gotHit();
 
     /**
      * Changes background and draws player after explosion
      * @param Map pointer to map
      */
-    void gotHit2(CMap *Map);
+    void afterHit(CMap *Map);
 
     /**
-     * virtual method
+     * Call all functions to update the player status
      * @param Map pointer to map
      * @param bombsArr vector of placed bombs
      */
@@ -120,7 +120,7 @@ public:
     CPlayerNotAI(int num) : CPlayer(num) {}
 
     /**
-     * Draws stats
+     * Call all functions to update the player status
      * @param Map pointer to map
      * @param bombsArr vector of bombs
      */
